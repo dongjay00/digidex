@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* --------------------------
+   🎨 Theme Variables
+--------------------------- */
+@theme {
+  --color-background: hsl(222.2 84% 4.9%);
+  --color-foreground: hsl(210 40% 98%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* --------------------------
+   🧱 Base Styles
+--------------------------- */
+@layer base {
+  * {
+    border-color: var(--color-border, hsl(240 5% 64%));
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* --------------------------
+   💫 Custom Utilities
+--------------------------- */
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: theme("colors.slate.800");
+    border-radius: 0.5rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: theme("colors.purple.600");
+    border-radius: 0.5rem;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: theme("colors.purple.500");
+  }
 }

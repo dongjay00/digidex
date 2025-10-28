@@ -10,7 +10,25 @@ import { TrendingUp } from "lucide-react";
 export default function LevelsPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["levels", "list"],
-    queryFn: () => getLevelList(),
+    queryFn: async () => {
+      const [page0Data, page1Data] = await Promise.all([
+        getLevelList(0),
+        getLevelList(1),
+      ]);
+
+      const combinedFields = [
+        ...(page0Data.content?.fields || []),
+        ...(page1Data.content?.fields || []),
+      ];
+
+      return {
+        ...page0Data,
+        content: {
+          ...page0Data.content,
+          fields: combinedFields,
+        },
+      };
+    },
   });
 
   if (isLoading) {
@@ -62,11 +80,11 @@ export default function LevelsPage() {
         <CardContent className="p-8">
           <h2 className="text-2xl font-bold text-white mb-6">Evolution Path</h2>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            {sortedLevels?.slice(0, 6).map((level, index) => (
+            {sortedLevels?.slice(0, 9).map((level, index) => (
               <React.Fragment key={level.id}>
                 <div className="text-center">
                   <div
-                    className={`w-20 h-20 bg-gradient-to-br ${getLevelGradient(
+                    className={`w-12 h-12 bg-gradient-to-br ${getLevelGradient(
                       level.name
                     )} rounded-full flex items-center justify-center mb-2`}
                   >
@@ -76,7 +94,10 @@ export default function LevelsPage() {
                     {level.name}
                   </p>
                 </div>
-                {index < 5 && <div className="text-purple-400 text-2xl">→</div>}
+                {index < 7 && <div className="text-purple-400 text-2xl">→</div>}
+                {index == 7 && (
+                  <div className="text-purple-400 text-2xl">|</div>
+                )}
               </React.Fragment>
             ))}
           </div>

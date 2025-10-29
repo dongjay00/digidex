@@ -2,16 +2,48 @@ export interface Digimon {
   id: number;
   name: string;
   xAntibody: boolean;
-  image: string;
-  level: string;
-  type: string;
-  attribute: string;
-  fields: string[];
+  images: {
+    href: string;
+    transparent: boolean;
+  }[];
+  levels: {
+    id: number;
+    level: string;
+  }[];
+  types: {
+    id: number;
+    type: string;
+  }[];
+  attributes: {
+    id: number;
+    attribute: string;
+  }[];
+  fields: {
+    id: number;
+    field: string;
+    image: string;
+  }[];
   releaseDate: string;
-  description: string;
-  skills: Skill[];
-  priorEvolutions: string[];
-  nextEvolutions: string[];
+  descriptions: {
+    origin: string;
+    language: string;
+    description: string;
+  }[];
+  skills: Array<Skill & { id: number }>;
+  priorEvolutions: {
+    id: number;
+    digimon: string;
+    condition: string;
+    image: string;
+    url: string;
+  }[];
+  nextEvolutions: {
+    id: number;
+    digimon: string;
+    condition: string;
+    image: string;
+    url: string;
+  }[];
 }
 
 export interface DigimonListItem {

@@ -45,7 +45,7 @@ export function DigimonCard({ digimon }: DigimonCardProps) {
           <h3 className="font-bold text-white text-lg group-hover:text-purple-400 transition-colors">
             {digimon.name}
           </h3>
-          <p className="text-sm text-gray-400 mt-1">ID: {digimon.id}</p>
+          {/* <p className="text-sm text-gray-400 mt-1">ID: {digimon.id}</p> */}
         </div>
       </Link>
     </Card>

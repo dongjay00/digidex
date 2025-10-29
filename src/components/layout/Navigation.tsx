@@ -10,6 +10,7 @@ import {
   Zap,
   TrendingUp,
   Sparkles,
+  TypeOutline,
 } from "lucide-react";
 import { cn } from "@/lib/utils/helpers";
 
@@ -19,6 +20,7 @@ const navItems = [
   { href: "/attributes", label: "Attributes", icon: Shield },
   { href: "/fields", label: "Fields", icon: Grid3x3 },
   { href: "/skills", label: "Skills", icon: Zap },
+  { href: "/types", label: "Types", icon: TypeOutline },
   { href: "/levels", label: "Levels", icon: TrendingUp },
 ];
 

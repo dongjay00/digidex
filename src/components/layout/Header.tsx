@@ -25,14 +25,14 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <Navigation />
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-300 hover:bg-slate-800 rounded-lg transition-colors"
+            className="lg:hidden p-2 text-gray-300 hover:bg-slate-800 rounded-lg transition-colors"
           >
             {mobileMenuOpen ? (
               <X className="w-6 h-6" />

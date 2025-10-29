@@ -78,6 +78,12 @@ export interface Level {
   description: string;
 }
 
+export interface Type {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface Pageable {
   currentPage: number;
   elementsOnPage: number;
@@ -132,6 +138,19 @@ export interface SkillListResponse {
 }
 
 export interface LevelListResponse {
+  content: {
+    name: string;
+    description: string;
+    fields: {
+      id: number;
+      name: string;
+      href: string;
+    }[];
+  };
+  pageable: Pageable;
+}
+
+export interface TypeListResponse {
   content: {
     name: string;
     description: string;

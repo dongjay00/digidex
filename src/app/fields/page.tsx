@@ -5,8 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getFieldList } from "@/lib/api/fields";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Loading } from "@/components/ui/Loading";
-import { Badge } from "@/components/ui/Badge";
-import { ExternalLink } from "lucide-react";
 import { Field } from "@/types/digimon";
 import Image from "next/image";
 

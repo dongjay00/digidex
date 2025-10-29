@@ -5,9 +5,33 @@ import { useAttributeList } from "@/lib/hooks/useAttributes";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Loading } from "@/components/ui/Loading";
 import { getAttributeGradient } from "@/lib/utils/helpers";
+import { useQuery } from "@tanstack/react-query";
+import { getAttributeList } from "@/lib/api/attributes";
+import { Attribute } from "@/types/digimon";
 
 export default function AttributesPage() {
-  const { data, isLoading, error } = useAttributeList();
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["attributes", "list"],
+    queryFn: async () => {
+      const [page0Data, page1Data] = await Promise.all([
+        getAttributeList(0),
+        getAttributeList(1),
+      ]);
+
+      const combinedFields = [
+        ...(page0Data.content?.fields || []),
+        ...(page1Data.content?.fields || []),
+      ];
+
+      return {
+        ...page0Data,
+        content: {
+          ...page0Data.content,
+          fields: combinedFields,
+        },
+      };
+    },
+  });
 
   if (isLoading) {
     return <Loading text="Loading attributes..." />;
@@ -80,9 +104,18 @@ export default function AttributesPage() {
 function AttributeCard({
   attribute,
 }: {
-  attribute: { id: number; name: string };
+  attribute: { id: number; name: string; href: string };
 }) {
-  const { data: attributeDetail } = useAttributeList();
+  const [attributeDetail, setAttributeDetail] =
+    React.useState<Attribute | null>(null);
+
+  React.useEffect(() => {
+    fetch(attribute.href)
+      .then((res) => res.json())
+      .then((data) => setAttributeDetail(data))
+      .catch((err) => console.error("Error fetching attribute detail:", err));
+  }, [attribute.href]);
+
   const gradient = getAttributeGradient(attribute.name);
 
   return (
@@ -98,28 +131,10 @@ function AttributeCard({
           </span>
         </div>
         <h3 className="text-2xl font-bold text-white mb-3">{attribute.name}</h3>
-        <AttributeDescription attributeId={attribute.id} />
+        <p className="text-gray-200 text-sm leading-relaxed">
+          {attributeDetail?.description || ""}
+        </p>
       </CardContent>
     </Card>
-  );
-}
-
-function AttributeDescription({ attributeId }: { attributeId: number }) {
-  const { data: attributeDetail } = useAttributeList();
-
-  // API에서 개별 속성 상세 정보를 가져오는 것이 이상적이지만
-  // 여기서는 기본 설명을 제공합니다
-  const descriptions: Record<number, string> = {
-    1: "Data Digimon are neutral entities that exist according to the established environment. They value peace above all.",
-    2: "Free attribute Digimon are unrestricted by the traditional type system and operate independently.",
-    3: "Virus Digimon can be destructive forces, though not all are inherently evil. They often challenge the status quo.",
-    4: "Vaccine Digimon are protectors that defend against Virus types. They often maintain order in the Digital World.",
-    5: "Unknown attribute Digimon have mysterious origins and don't fit into traditional classifications.",
-  };
-
-  return (
-    <p className="text-gray-200 text-sm leading-relaxed">
-      {descriptions[attributeId] || "A unique attribute in the Digital World."}
-    </p>
   );
 }

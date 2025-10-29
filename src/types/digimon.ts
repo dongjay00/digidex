@@ -24,6 +24,7 @@ export interface DigimonListItem {
 export interface Skill {
   skill: string;
   description: string;
+  translation: string;
 }
 
 export interface Attribute {

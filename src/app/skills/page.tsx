@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Loading } from "@/components/ui/Loading";
 import { Button } from "@/components/ui/Button";
 import { Zap, Search } from "lucide-react";
+import { Skill } from "@/types/digimon";
 
 export default function SkillsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -105,8 +106,7 @@ function SkillCard({
   skill: { id: number; name: string; href: string };
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [skillDetail, setSkillDetail] = useState<any>(null);
+  const [skillDetail, setSkillDetail] = useState<Skill | null>(null);
 
   const fetchSkillDetail = async () => {
     if (!skillDetail && !isExpanded) {

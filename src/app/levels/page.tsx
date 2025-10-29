@@ -6,6 +6,7 @@ import { getLevelList } from "@/lib/api/levels";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Loading } from "@/components/ui/Loading";
 import { TrendingUp } from "lucide-react";
+import { Level } from "@/types/digimon";
 
 export default function LevelsPage() {
   const { data, isLoading, error } = useQuery({
@@ -94,8 +95,8 @@ export default function LevelsPage() {
                     {level.name}
                   </p>
                 </div>
-                {index < 7 && <div className="text-purple-400 text-2xl">→</div>}
-                {index == 7 && (
+                {index < 5 && <div className="text-purple-400 text-2xl">→</div>}
+                {index >= 5 && index < 8 && (
                   <div className="text-purple-400 text-2xl">|</div>
                 )}
               </React.Fragment>
@@ -120,7 +121,7 @@ function LevelCard({
   level: { id: number; name: string; href: string };
 }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [levelDetail, setLevelDetail] = React.useState<any>(null);
+  const [levelDetail, setLevelDetail] = React.useState<Level | null>(null);
 
   React.useEffect(() => {
     fetch(level.href)

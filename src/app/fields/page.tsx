@@ -7,12 +7,32 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Loading } from "@/components/ui/Loading";
 import { Badge } from "@/components/ui/Badge";
 import { ExternalLink } from "lucide-react";
+import { Field } from "@/types/digimon";
+import Image from "next/image";
 
 export default function FieldsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const { data, isLoading, error } = useQuery({
     queryKey: ["fields", "list"],
-    queryFn: () => getFieldList(),
+    queryFn: async () => {
+      const [page0Data, page1Data] = await Promise.all([
+        getFieldList(0),
+        getFieldList(1),
+      ]);
+
+      const combinedFields = [
+        ...(page0Data.content?.fields || []),
+        ...(page1Data.content?.fields || []),
+      ];
+
+      return {
+        ...page0Data,
+        content: {
+          ...page0Data.content,
+          fields: combinedFields,
+        },
+      };
+    },
   });
 
   const filteredFields = data?.content?.fields?.filter((field) =>
@@ -70,27 +90,49 @@ function FieldCard({
 }: {
   field: { id: number; name: string; href: string };
 }) {
-  const fieldDescriptions: Record<string, string> = {
-    "Metal Empire":
-      "Machine, cyborg, or other mechanical Digimon. Can represent cities and factories.",
-    "Nature Spirits":
-      "Beast and plant-type Digimon that embody the natural world.",
-    "Nightmare Soldiers":
-      "Dark and undead-type Digimon associated with darkness and nightmares.",
-    "Wind Guardians": "Bird and wind-type Digimon that rule the skies.",
-    "Deep Savers":
-      "Aquatic Digimon that inhabit the depths of the Digital World's oceans.",
-    "Dragon's Roar":
-      "Dragon-type Digimon known for their immense power and ferocity.",
-    "Virus Busters":
-      "Holy and angelic Digimon that fight against evil and corruption.",
-    Unknown: "Digimon with mysterious or undefined field classifications.",
-    "Jungle Troopers":
-      "Insect and plant Digimon that thrive in jungle environments.",
-    "Dark Area": "Digimon from the darkest regions of the Digital World.",
-  };
+  const [fieldDetail, setFieldDetail] = React.useState<Field | null>(null);
 
-  const fieldColors: Record<string, string> = {
+  React.useEffect(() => {
+    fetch(field.href)
+      .then((res) => res.json())
+      .then((data) => setFieldDetail(data))
+      .catch((err) => console.error("Error fetching field detail:", err));
+  }, [field.href]);
+
+  const gradient = getFieldGradient(field.name);
+
+  return (
+    <Card hover className="relative">
+      <CardContent className="p-6">
+        {fieldDetail?.href && (
+          <div className="absolute top-6 right-6 w-16 h-16">
+            <Image
+              src={fieldDetail.href}
+              alt={fieldDetail.name}
+              width={64}
+              height={64}
+              className="object-contain"
+            />
+          </div>
+        )}
+        <div
+          className={`w-16 h-16 bg-gradient-to-br ${gradient} rounded-xl flex items-center justify-center mb-4`}
+        >
+          <span className="text-2xl font-bold text-white">{field.name[0]}</span>
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-3">{field.name}</h3>
+        {fieldDetail?.description && (
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+            {fieldDetail.description}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function getFieldGradient(fieldName: string): string {
+  const gradients: Record<string, string> = {
     "Metal Empire": "from-gray-500 to-slate-600",
     "Nature Spirits": "from-green-500 to-emerald-600",
     "Nightmare Soldiers": "from-purple-600 to-violet-700",
@@ -103,31 +145,5 @@ function FieldCard({
     "Dark Area": "from-slate-800 to-gray-900",
   };
 
-  const gradient = fieldColors[field.name] || "from-purple-500 to-pink-600";
-
-  return (
-    <Card hover>
-      <CardContent className="p-6">
-        <div
-          className={`w-16 h-16 bg-gradient-to-br ${gradient} rounded-xl flex items-center justify-center mb-4`}
-        >
-          <span className="text-2xl font-bold text-white">{field.name[0]}</span>
-        </div>
-        <h3 className="text-2xl font-bold text-white mb-3">{field.name}</h3>
-        <p className="text-gray-300 text-sm leading-relaxed mb-4">
-          {fieldDescriptions[field.name] ||
-            "A unique field in the Digital World."}
-        </p>
-        <a
-          href={field.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center text-sm text-purple-400 hover:text-purple-300 transition-colors"
-        >
-          View Details
-          <ExternalLink className="w-4 h-4 ml-1" />
-        </a>
-      </CardContent>
-    </Card>
-  );
+  return gradients[fieldName] || "from-gray-500 to-slate-600";
 }

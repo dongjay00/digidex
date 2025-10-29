@@ -13,7 +13,7 @@ interface DigimonCardProps {
 }
 
 export function DigimonCard({ digimon }: DigimonCardProps) {
-  const { isFavorite, toggleFavorite } = useDigimonStore();
+  const { isFavorite, toggleFavorite, recentlyViewed } = useDigimonStore();
   const favorite = isFavorite(digimon.id);
 
   return (
@@ -45,7 +45,9 @@ export function DigimonCard({ digimon }: DigimonCardProps) {
           <h3 className="font-bold text-white text-lg group-hover:text-purple-400 transition-colors">
             {digimon.name}
           </h3>
-          {/* <p className="text-sm text-gray-400 mt-1">ID: {digimon.id}</p> */}
+          {recentlyViewed.includes(digimon.id) && (
+            <p className="text-sm text-gray-400 mt-1">Recently Viewed</p>
+          )}
         </div>
       </Link>
     </Card>
